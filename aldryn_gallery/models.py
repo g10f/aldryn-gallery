@@ -1,38 +1,23 @@
-# -*- coding: utf-8 -*-
 from functools import partial
 
+from cms.models.fields import PageField
+from cms.models.pluginmodel import CMSPlugin
 from django.db import models
 from django.utils.html import strip_tags
 from django.utils.translation import ugettext_lazy as _
-
-from cms.models.pluginmodel import CMSPlugin
-from cms.models.fields import PageField
-
 from djangocms_text_ckeditor.fields import HTMLField
 from filer.fields.folder import FilerFolderField
 from filer.fields.image import FilerImageField
 
-from . import compat
 from .utils import get_additional_styles
 
-
-if compat.LTE_DJANGO_1_6:
-    # related_name='%(app_label)s_%(class)s' does not work on  Django 1.6
-    CMSPluginField = partial(
-        models.OneToOneField,
-        to=CMSPlugin,
-        related_name='+',
-        parent_link=True,
-    )
-else:
-    # Once djangoCMS < 3.3.1 support is dropped
-    # Remove the explicit cmsplugin_ptr field declarations
-    CMSPluginField = partial(
-        models.OneToOneField,
-        to=CMSPlugin,
-        related_name='%(app_label)s_%(class)s',
-        parent_link=True,
-    )
+CMSPluginField = partial(
+    models.OneToOneField,
+    to=CMSPlugin,
+    related_name='%(app_label)s_%(class)s',
+    parent_link=True,
+    on_delete=models.CASCADE,
+)
 
 
 class GalleryPlugin(CMSPlugin):
@@ -58,7 +43,7 @@ class GalleryPlugin(CMSPlugin):
     duration = models.IntegerField(_('Duration'), default=300)
     shuffle = models.BooleanField(_('Shuffle slides'), default=False)
 
-    def __unicode__(self):
+    def __str__(self):
         style = _('Style')
         engine = _('Engine')
         timeout = _('Timeout')
@@ -79,7 +64,7 @@ class SlidePlugin(CMSPlugin):
     )
 
     cmsplugin_ptr = CMSPluginField()
-    image = FilerImageField(verbose_name=_('image'), blank=True, null=True)
+    image = FilerImageField(verbose_name=_('image'), blank=True, null=True, on_delete=models.CASCADE)
     content = HTMLField("Content", blank=True, null=True)
     url = models.URLField(_("Link"), blank=True, null=True)
     page_link = PageField(
@@ -105,7 +90,7 @@ class SlidePlugin(CMSPlugin):
         blank=True
     )
 
-    def __unicode__(self):
+    def __str__(self):
         image_text = content_text = ''
 
         if self.image_id:
@@ -139,7 +124,7 @@ class SlidePlugin(CMSPlugin):
 
 class SlideFolderPlugin(CMSPlugin):
     cmsplugin_ptr = CMSPluginField()
-    folder = FilerFolderField(verbose_name=_('folder'))
+    folder = FilerFolderField(verbose_name=_('folder'), on_delete=models.CASCADE)
 
     def copy_relations(self, oldinstance):
         self.folder_id = oldinstance.folder_id

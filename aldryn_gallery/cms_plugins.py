@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
-
 from cms.plugin_base import CMSPluginBase
 from cms.plugin_pool import plugin_pool
+from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from .forms import GalleryPluginForm
 from .models import GalleryPlugin, SlidePlugin, SlideFolderPlugin
@@ -11,7 +9,6 @@ from .models import GalleryPlugin, SlidePlugin, SlideFolderPlugin
 
 # Base Classes
 class GalleryBase(CMSPluginBase):
-
     class Meta:
         abstract = True
 
@@ -35,7 +32,7 @@ class GalleryChildBase(GalleryBase):
         if instance.parent is None:
             style = GalleryPlugin.STANDARD
         else:
-            style = getattr(instance.parent.get_plugin_instance()[0], 'style',  GalleryPlugin.STANDARD)
+            style = getattr(instance.parent.get_plugin_instance()[0], 'style', GalleryPlugin.STANDARD)
         return 'aldryn_gallery/plugins/{}/{}.html'.format(style, name)
 
     def get_render_template(self, context, instance, placeholder):

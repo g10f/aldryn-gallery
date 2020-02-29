@@ -12,14 +12,14 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('filer', '0002_auto_20150606_2003'),
-        ('cms', '__latest__'),
+        ('cms', '0018_create_pagenode'),
     ]
 
     operations = [
         migrations.CreateModel(
             name='GalleryPlugin',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=models.CASCADE)),
                 ('style', models.CharField(default=b'standard', max_length=50, verbose_name='Style', choices=[(b'standard', 'Standard')])),
                 ('engine', models.CharField(default=b'fade', max_length=50, verbose_name='Engine', choices=[(b'fade', 'Fade'), (b'slide', 'Slide')])),
                 ('timeout', models.IntegerField(default=5000, help_text='Set to 0 to disable autoplay', verbose_name='Timeout')),
@@ -34,8 +34,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SlideFolderPlugin',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin')),
-                ('folder', filer.fields.folder.FilerFolderField(verbose_name='folder', to='filer.Folder')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=models.CASCADE)),
+                ('folder', filer.fields.folder.FilerFolderField(verbose_name='folder', to='filer.Folder', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -45,13 +45,13 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SlidePlugin',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=models.CASCADE)),
                 ('content', djangocms_text_ckeditor.fields.HTMLField(null=True, verbose_name=b'Content', blank=True)),
                 ('url', models.URLField(null=True, verbose_name='Link', blank=True)),
                 ('target', models.CharField(blank=True, max_length=100, verbose_name='target', choices=[(b'', 'same window'), (b'_blank', 'new window'), (b'_parent', 'parent window'), (b'_top', 'topmost frame')])),
                 ('link_anchor', models.CharField(max_length=128, verbose_name='link anchor', blank=True)),
                 ('link_text', models.CharField(max_length=200, verbose_name='link text', blank=True)),
-                ('image', filer.fields.image.FilerImageField(verbose_name='image', blank=True, to='filer.Image', null=True)),
+                ('image', filer.fields.image.FilerImageField(verbose_name='image', blank=True, to='filer.Image', null=True, on_delete=models.CASCADE)),
                 ('page_link', cms.models.fields.PageField(blank=True, to='cms.Page', help_text='A link to a page has priority over a text link.', null=True, verbose_name='Page')),
             ],
             options={
